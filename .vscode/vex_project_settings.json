@@ -1,0 +1,19 @@
+{
+	"extension": {
+		"version": "0.8.2026020401",
+		"json": 2
+	},
+	"project": {
+		"name": "2067",
+		"description": "",
+		"creationDate": "10/31/2026, 11:23:48 AM",
+		"platform": "V5",
+		"language": "python",
+		"slot": 8,
+		"sdkVersion": "V5_1_0_1_25",
+		"python": {
+			"main": "src/main.py",
+			"enableFloats": true
+		}
+	}
+}
