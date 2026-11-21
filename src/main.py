@@ -30,24 +30,24 @@ import math
 #region  MOTOR & PNEUMATICS CONFIGURATION 
 # Configure your motor ports here
 FRONT_LEFT_PORT = Ports.PORT10
-FRONT_RIGHT_PORT = Ports.PORT20
-BACK_LEFT1_PORT = Ports.PORT1
-BACK_LEFT2_PORT = Ports.PORT1
-BACK_RIGHT1_PORT = Ports.PORT11
-BACK_RIGHT2_PORT = Ports.PORT11
+FRONT_RIGHT_PORT = Ports.PORT12
+BACK_LEFT1_PORT = Ports.PORT9
+BACK_LEFT2_PORT = Ports.PORT8
+BACK_RIGHT1_PORT = Ports.PORT19
+BACK_RIGHT2_PORT = Ports.PORT18
 
 
 # Configure motor reverse settings (True = reversed, False = normal)
 FRONT_LEFT_REVERSE = True
-FRONT_RIGHT_REVERSE = True
-BACK_LEFT1_REVERSE = False
-BACK_LEFT2_REVERSE = False
+FRONT_RIGHT_REVERSE = False
+BACK_LEFT1_REVERSE = True
+BACK_LEFT2_REVERSE = True
 BACK_RIGHT1_REVERSE = False
 BACK_RIGHT2_REVERSE = False
 
 #endregion
 #region  SENSOR CONFIG
-AI_PORT=Ports.PORT20
+AI_PORT=Ports.PORT7
 INT_PORT=Ports.PORT21
 #endregion
 #region  DRIVE INIT
@@ -64,8 +64,11 @@ back_left=MotorGroup(back_left1,back_left2)
 back_right=MotorGroup(back_right1,back_right2)
 
 def drive():
+    
     forward = controller.axis3.position()  # Left stick Y-axis
     turn_val = controller.axis1.position() 
+    if(forward==0 and turn_val==0): 
+        stop_drive()
     if abs(turn_val)<10:turn=2*abs(turn_val)
     elif abs(turn_val)<60: turn=.006*((abs(turn_val)-10)**2)+20
     else: turn=40+((60/(math.exp(2)-1))*(math.exp(.05*(abs(turn_val)-60))-1))
@@ -106,11 +109,21 @@ timer = Timer()
 
 #region DRIVETRAIN FUNCS
 def ai_stuff():
+    controller.screen.clear_screen()
+    controller.screen.set_cursor(1, 1)
     obj=ai.take_snapshot(AiVision.ALL_AIOBJS)
+    sum=[0,0,0,0,0]
     for item in obj:
-        print("Score: {}".format((item.score)))
-        print("ID: {}".format((item.id)))
-        print("X: {}, Y: {}".format(item.centerX, item.centerX))
+        # controller.screen.print("ID: {}, Score: {}; X: {}, Y: {}".format(item.id,item.score,item.centerX, item.centerY))
+        sum[item.id]+=1
+        # controller.screen.next_row()
+    controller.screen.print("Cups: {} | Yellow: {}".format(sum[4],sum[3]))
+    controller.screen.next_row()
+    controller.screen.print("RY: {} | BY: {}".format(sum[2],sum[1]))
+    controller.screen.next_row()
+    controller.screen.print("RB: {}".format(sum[0]))
+    # controller.screen.print("Saw {} Objects".format((sum)))
+    
 
 def stop_drive():
     """Stop all drive motors."""
